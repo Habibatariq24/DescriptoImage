@@ -13,19 +13,49 @@
 ## 📌 Overview
 
 DescriptoImage is a deep learning project that generates **fashion product images from text captions**.
-It explores and compares multiple generative architectures — from simple GANs to StackGAN and fine-tuned
-Stable Diffusion — trained on a real-world fashion dataset with image URLs and product title captions.
+It explores and compares multiple generative architectures — from simple GANs to Style GAN, Attention GAN,
+and fine-tuned Stable Diffusion — trained on a real-world fashion dataset with image URLs and product title captions.
 
 ---
 
 ## ✨ Features
 
 - 📝 Generates images from natural language fashion descriptions
-- 🧠 Implements and compares **4 architectures**: Simple GAN, StyleGAN-inspired, StackGAN (2-stage), and Stable Diffusion
+- 🧠 Implements and compares **4 architectures**: Simple GAN, Style GAN, Attention GAN, and Stable Diffusion
 - 🔤 Text encoding via **LSTM-based encoder** and **CLIP** (for diffusion)
 - 📦 Dataset preprocessing: text cleaning, tokenization, padding, SMOTE class balancing
 - 🖼️ Image preprocessing: URL-based downloading, normalization, resizing to 64×64 and 256×256
 - 📊 Evaluated with **FID Score** and **CLIP Score**
+
+---
+
+## 🖼️ Generated Results
+
+### 1️⃣ Simple GAN
+
+| Epoch 50 | Epoch 600 |
+|---|---|
+| ![Simple GAN 50](simple%20gan%20-50%20epoch.png) | ![Simple GAN 600](simple%20gan-600%20epoch.png) |
+
+---
+
+### 2️⃣ Style GAN
+
+| Epoch 50 | Epoch 600 |
+|---|---|
+| ![Style GAN 50](style%20gan-50%20epoch.png) | ![Style GAN 600](style%20gan%20-600%20epoch.png) |
+
+---
+
+### 3️⃣ Attention GAN
+
+![Attention GAN](attention%20gan.png)
+
+---
+
+### 4️⃣ Stable Diffusion (Fine-tuned)
+
+![Stable Diffusion](stable%20diffusion%20-50%20epoch.png)
 
 ---
 
@@ -39,24 +69,37 @@ Random Noise ─────────────────┘
                         ↕
               Discriminator (Real/Fake)
 ```
-- Trained for **50, 200, and 600 epochs**
+- Trained for **50 and 600 epochs**
 - Loss: Binary Crossentropy
 - Optimizer: Adam (lr=1e-4)
 
 ---
 
-### 2️⃣ StackGAN (2-Stage)
+### 2️⃣ Style GAN
 ```
-Stage I:  Text + Noise → Generator → 64×64 low-res image
-Stage II: 64×64 image  → Generator → 256×256 high-res image
+Text Caption → LSTM Encoder ─┐
+                              ├─► Style Modulation → Generator → 64×64 Image
+Random Noise ─────────────────┘
+                        ↕
+              Discriminator (Real/Fake)
 ```
-- Shared text encoder across both stages
-- Exponential learning rate decay scheduler
-- Separate discriminators per stage
+- Trained for **50 and 600 epochs**
+- Improved image quality over Simple GAN
 
 ---
 
-### 3️⃣ Stable Diffusion (Fine-tuned)
+### 3️⃣ Attention GAN
+```
+Text Caption → LSTM Encoder → Attention Layer ─┐
+                                                ├─► Generator → Image
+Random Noise ──────────────────────────────────┘
+```
+- Attention mechanism focuses on relevant text features
+- Better text-image alignment than basic GAN
+
+---
+
+### 4️⃣ Stable Diffusion (Fine-tuned)
 ```
 Caption → CLIP Tokenizer → CLIPTextModel → Encoder Hidden States
                                                     ↓
@@ -64,7 +107,7 @@ Image → VAE Encoder → Latents + Noise → UNet → Denoised Latents → VAE 
 ```
 - Fine-tuned **U-Net** of `CompVis/stable-diffusion-v1-4`
 - CLIP tokenizer: `openai/clip-vit-large-patch14`
-- Trained for **3 epochs** with AdamW (lr=1e-4)
+- Trained with AdamW (lr=1e-4)
 
 ---
 
@@ -76,7 +119,7 @@ Image → VAE Encoder → Latents + Noise → UNet → Denoised Latents → VAE 
   - Text cleaning: lowercasing, URL/punctuation removal
   - Tokenization with `num_words=5000`, padding to max sequence length
   - Images downloaded in parallel using `ThreadPoolExecutor`
-  - Resized to `64×64` (GAN) and `256×256` (StackGAN/Diffusion)
+  - Resized to `64×64` (GAN) and `256×256` (Diffusion)
   - SMOTE applied for class imbalance
 
 ---
@@ -125,7 +168,7 @@ pip install pandas numpy opencv-python pillow matplotlib scikit-learn imbalanced
 
 ### 3. Run the notebook
 ```bash
-jupyter notebook text-to-image-generation_using_GANS.ipynb
+jupyter notebook "text-to-image-generation uisng GANS.ipynb"
 ```
 
 ---
@@ -134,10 +177,13 @@ jupyter notebook text-to-image-generation_using_GANS.ipynb
 
 ```
 DescriptoImage/
-├── text-to-image-generation_using_GANS.ipynb  ← Main notebook
-├── fashion_dataset_with_images.csv            ← Preprocessed dataset
-├── fashion_lora_output/                       ← Fine-tuned U-Net weights
-├── requirements.txt
+├── text-to-image-generation uisng GANS.ipynb  ← Main notebook
+├── simple gan -50 epoch.png                   ← Simple GAN output (50 epochs)
+├── simple gan-600 epoch.png                   ← Simple GAN output (600 epochs)
+├── style gan-50 epoch.png                     ← Style GAN output (50 epochs)
+├── style gan -600 epoch.png                   ← Style GAN output (600 epochs)
+├── attention gan.png                          ← Attention GAN output
+├── stable diffusion -50 epoch.png             ← Stable Diffusion output
 └── README.md
 ```
 
