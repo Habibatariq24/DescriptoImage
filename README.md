@@ -49,7 +49,9 @@ and fine-tuned Stable Diffusion — trained on a real-world fashion dataset with
 
 ### 3️⃣ Attention GAN
 
-![Attention GAN](attention%20gan.png)
+| Epoch 50 | Epoch 600 |
+|---|---|
+| ![Attention GAN 50](attention%20gan-50%20epoch.png) | ![Attention GAN 600](attention%20gan.png) |
 
 ---
 
@@ -96,6 +98,7 @@ Random Noise ──────────────────────�
 ```
 - Attention mechanism focuses on relevant text features
 - Better text-image alignment than basic GAN
+- Trained for **50 and 600 epochs**
 
 ---
 
@@ -182,7 +185,8 @@ DescriptoImage/
 ├── simple gan-600 epoch.png                   ← Simple GAN output (600 epochs)
 ├── style gan-50 epoch.png                     ← Style GAN output (50 epochs)
 ├── style gan -600 epoch.png                   ← Style GAN output (600 epochs)
-├── attention gan.png                          ← Attention GAN output
+├── attention gan-50 epoch.png                 ← Attention GAN output (50 epochs)
+├── attention gan.png                          ← Attention GAN output (600 epochs)
 ├── stable diffusion -50 epoch.png             ← Stable Diffusion output
 └── README.md
 ```
